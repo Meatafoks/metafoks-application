@@ -1,5 +1,5 @@
 import { MetafoksConfigReader, MetafoksConfigReaderConfiguration } from '@metafoks/config-reader'
-import { LoggerFactory } from '@metafoks/application-logger'
+import { LoggerFactory } from '@metafoks/logger'
 import { Container } from '@metafoks/context'
 import { Constructable } from 'typedi/types/types/constructable.type'
 import { AbstractConstructable } from 'typedi/types/types/abstract-constructable.type'
