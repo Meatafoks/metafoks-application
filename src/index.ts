@@ -1,5 +1,5 @@
 export * from '@metafoks/context'
-export * from '@metafoks/application-logger'
+export * from '@metafoks/logger'
 export * from './decorators'
 export * from './interfaces'
 export * from './extionsion'

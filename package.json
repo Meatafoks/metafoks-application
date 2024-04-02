@@ -16,10 +16,10 @@
   "author": "Yakov Foks <notafoks@yandex.ru>",
   "license": "MIT",
   "dependencies": {
-    "@metafoks/application-logger": "^1.0.0",
-    "@metafoks/config-reader": "^1.0.0",
-    "@metafoks/context": "^1.0.0",
-    "@metafoks/toolbox": "^1.0.0",
+    "@metafoks/logger": "2.0.0",
+    "@metafoks/config-reader": "1.0.2",
+    "@metafoks/context": "1.0.0",
+    "@metafoks/toolbox": "1.0.1",
     "typescript": "5.3.3"
   },
   "scripts": {
