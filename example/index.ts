@@ -1,8 +1,9 @@
-import { Application, Autowire, With } from '../src'
+import { Application, Autowire, Override, With } from '../src'
 import { TestService } from './services/TestService'
 import { ExampleExtension } from '../example-extension'
 
 @With(ExampleExtension)
+@Override({ foo: 'poo' })
 @Application
 export class App {
   @Autowire

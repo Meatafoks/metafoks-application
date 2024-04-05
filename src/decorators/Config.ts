@@ -9,5 +9,14 @@ export function Configure(configuration: Partial<MetafoksApplicationConfiguratio
 }
 
 export function Profile(profile?: string): ClassDecorator {
-  return Configure({ profile })
+  return Configure({
+    config: {
+      profile,
+    },
+  })
+}
+
+export function Override(config: MetafoksApplicationConfiguration & MetafoksAppConfig): ClassDecorator {
+  MetafoksApplication.overrideConfigValues(config)
+  return () => {}
 }

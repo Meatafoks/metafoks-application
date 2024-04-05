@@ -1,4 +1,4 @@
-import { MetafoksApplication } from '../MetafoksApplication'
+import { MetafoksApplication, MetafoksApplicationConfigurationExtra } from '../MetafoksApplication'
 import { RawService } from '@metafoks/context'
 import { MetafoksApplicationComponentIdentifier } from '../identify'
 
@@ -13,4 +13,15 @@ export function Application(target: any) {
   MetafoksApplication.startApplication().catch(reason => {
     console.error(reason)
   })
+}
+
+export function ApplicationConfigured(config?: MetafoksApplicationConfigurationExtra): ClassDecorator {
+  return (target: any) => {
+    RawService(MetafoksApplicationComponentIdentifier)(target)
+    if (MetafoksApplication.ignoreDecoratorAutorun) return
+
+    MetafoksApplication.startApplication(config).catch(reason => {
+      console.error(reason)
+    })
+  }
 }
