@@ -140,10 +140,10 @@ export class MetafoksApplication {
 
     this._logger.debug(`stopping application [force=${force}]`)
     if (MetafoksExtensionsLoader.extensionsTestModuleEnabled()) {
-      MetafoksExtensionsLoader.extensionsClose(force, this.container, this.configuration)
+      await MetafoksExtensionsLoader.extensionsClose(force, this.container, this.configuration)
     }
     this._logger.info('application has been stopped')
-    MetafoksEvents.dispatch('afterStart')
+    MetafoksEvents.dispatch('afterClose')
   }
 
   private static _configOverrides: MetafoksApplicationConfiguration & MetafoksAppConfig = {}

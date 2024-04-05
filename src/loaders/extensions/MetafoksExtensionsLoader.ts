@@ -53,6 +53,43 @@ export class MetafoksExtensionsLoader {
     return true
   }
 
+  public static extensionTestToInstall(id: string) {
+    if (this._configuration.blacklist?.includes(id)) {
+      this._logger.info(`[!] extension <${id}> install disabled by <config.extensions.blacklist = [...]>`)
+      return false
+    }
+
+    if (this._configuration.install?.exclude?.includes(id)) {
+      this._logger.info(`[!] extension <${id}> install disabled by <config.extensions.install.exclude = [...]>`)
+      return false
+    }
+    return true
+  }
+  public static extensionTestToAutorun(id: string) {
+    if (this._configuration.blacklist?.includes(id)) {
+      this._logger.info(`[!] extension <${id}> autorun disabled by <config.extensions.blacklist = [...]>`)
+      return false
+    }
+
+    if (this._configuration.autorun?.exclude?.includes(id)) {
+      this._logger.info(`[!] extension <${id}> autorun disabled by <config.extensions.autorun.exclude = [...]>`)
+      return false
+    }
+    return true
+  }
+  public static extensionTestToClose(id: string) {
+    if (this._configuration.blacklist?.includes(id)) {
+      this._logger.info(`[!] extension <${id}> closing disabled by <config.extensions.blacklist = [...]>`)
+      return false
+    }
+
+    if (this._configuration.close?.exclude?.includes(id)) {
+      this._logger.info(`[!] extension <${id}> closing disabled by <config.extensions.close.exclude = [...]>`)
+      return false
+    }
+    return true
+  }
+
   /**
    * Устанавливает расширения в контейнер
    * @param container
@@ -61,12 +98,20 @@ export class MetafoksExtensionsLoader {
   public static extensionsInstallToContainer(container: typeof Container, applicationConfig: any) {
     MetafoksEvents.dispatch('beforeExtensionsInstallPhase')
 
+    if (this._configuration.install?.enabled === false) {
+      this._logger.info('[!] extensions installing disabled by <config.extensions.install.enabled = false>')
+      return
+    }
+
     this._logger.debug('started extensions installation')
     const extensions = Object.values(this._extensions)
 
     for (const ext of extensions) {
       if (ext.install) {
         MetafoksEvents.dispatch('beforeExtensionInstall', ext.identifier)
+
+        if (!this.extensionTestToInstall(ext.identifier)) continue
+
         this._logger.debug(`installing extension with identifier <${ext.identifier}>`)
 
         ext.install(container, applicationConfig)
@@ -85,8 +130,13 @@ export class MetafoksExtensionsLoader {
    * @param container
    * @param applicationConfig
    */
-  public static extensionsClose(force: boolean, container: typeof Container, applicationConfig: any) {
+  public static async extensionsClose(force: boolean, container: typeof Container, applicationConfig: any) {
     MetafoksEvents.dispatch('beforeExtensionsClosePhase', force)
+
+    if (this._configuration.close?.enabled === false) {
+      this._logger.info('[!] extensions closing disabled by <config.extensions.close.enabled = false>')
+      return
+    }
 
     this._logger.debug('started extensions close phase')
     const extensions = Object.values(this._extensions)
@@ -94,9 +144,12 @@ export class MetafoksExtensionsLoader {
     for (const ext of extensions) {
       if (ext.close) {
         MetafoksEvents.dispatch('beforeExtensionClose', ext.identifier)
+
+        if (!this.extensionTestToClose(ext.identifier)) continue
+
         this._logger.debug(`closing extension with identifier <${ext.identifier}>`)
 
-        ext.close(force, container, applicationConfig)
+        await ext.close(force, container, applicationConfig)
 
         this._logger.info(`closed extension with identifier <${ext.identifier}>`)
         MetafoksEvents.dispatch('afterExtensionClose', ext.identifier)
@@ -125,14 +178,10 @@ export class MetafoksExtensionsLoader {
 
     for (const ext of extensions) {
       if (ext.autorun) {
-        if (this._configuration.autorun?.exclude?.includes(ext.identifier)) {
-          this._logger.info(
-            `[!] extension <${ext.identifier}> autorun disabled by <config.extensions.autorun.exclude = [...]>`,
-          )
-          continue
-        }
-
         MetafoksEvents.dispatch('beforeExtensionAutorun', ext.identifier)
+
+        if (!this.extensionTestToAutorun(ext.identifier)) continue
+
         this._logger.debug(`starting autorun of extension with identifier = <${ext.identifier}>`)
 
         await ext.autorun(container, applicationConfig)
@@ -153,5 +202,14 @@ export class MetafoksExtensionsLoader {
       enabled: true,
       exclude: [],
     },
+    install: {
+      enabled: true,
+      exclude: [],
+    },
+    close: {
+      enabled: true,
+      exclude: [],
+    },
+    blacklist: [],
   }
 }
