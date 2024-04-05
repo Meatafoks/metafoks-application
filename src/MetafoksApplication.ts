@@ -13,6 +13,7 @@ import {
   MetafoksExtensionsLoaderConfiguration,
 } from './loaders'
 import { merge } from '@metafoks/toolbox'
+import { MetafoksEvents } from './events'
 
 declare global {
   type MetafoksAppConfig = any
@@ -107,14 +108,20 @@ export class MetafoksApplication {
    * - Выполняет запуск автозагрузки расширений
    */
   public static async startApplication(config?: MetafoksApplicationConfigurationExtra) {
+    MetafoksEvents.dispatch('beforeStart')
+
     MetafoksApplication.configure(config)
     MetafoksConfigLoader.configReadProfiledJSON()
-
     MetafoksApplication._applicationInjectConfigToContainer()
-    MetafoksExtensionsLoader.extensionsInstallToContainer(this.container, this.configuration)
+    MetafoksEvents.dispatch('afterApplicationConfigLoaded', this.configuration)
 
+    MetafoksExtensionsLoader.extensionsInstallToContainer(this.container, this.configuration)
     await MetafoksExtensionsLoader.extensionsStartAutorun(this.container, this.configuration)
+
+    MetafoksEvents.dispatch('beforeApplicationStartCall')
     await MetafoksApplication._applicationInvokeApplicationComponentStart()
+
+    MetafoksEvents.dispatch('afterStart')
   }
 
   private static _configOverrides: MetafoksApplicationConfiguration & MetafoksAppConfig = {}

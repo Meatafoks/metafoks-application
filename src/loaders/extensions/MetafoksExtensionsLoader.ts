@@ -3,6 +3,7 @@ import { LoggerFactory } from '@metafoks/logger'
 import { merge } from '@metafoks/toolbox'
 import { MetafoksExtension } from '../../extionsion'
 import { Container } from '@metafoks/context'
+import { MetafoksEvents } from '../../events'
 
 /**
  * Загрузчик расширений
@@ -50,6 +51,8 @@ export class MetafoksExtensionsLoader {
    * @param applicationConfig
    */
   public static extensionsInstallToContainer(container: typeof Container, applicationConfig: any) {
+    MetafoksEvents.dispatch('beforeExtensionsInstallPhase')
+
     if (this._configuration.enabled === false) {
       this._logger.info('[!] extensions module disabled by <config.extensions.enabled = false>')
       return
@@ -60,13 +63,17 @@ export class MetafoksExtensionsLoader {
 
     for (const ext of extensions) {
       if (ext.install) {
+        MetafoksEvents.dispatch('beforeExtensionInstall', ext.identifier)
         this._logger.debug(`installing extension with identifier <${ext.identifier}>`)
 
         ext.install(container, applicationConfig)
+
         this._logger.info(`installed extension with identifier <${ext.identifier}>`)
+        MetafoksEvents.dispatch('afterExtensionInstall', ext.identifier)
       }
     }
     this._logger.info('extensions installations done')
+    MetafoksEvents.dispatch('afterExtensionsInstallPhase')
   }
 
   /**
@@ -76,6 +83,8 @@ export class MetafoksExtensionsLoader {
    * @param applicationConfig
    */
   public static async extensionsStartAutorun(container: typeof Container, applicationConfig: any) {
+    MetafoksEvents.dispatch('beforeExtensionsAutorunPhase')
+
     if (this._configuration.autorun?.enabled === false) {
       this._logger.info('[!] extensions autorun disabled by <config.extensions.autorun.enabled = false>')
       return
@@ -93,12 +102,17 @@ export class MetafoksExtensionsLoader {
           continue
         }
 
+        MetafoksEvents.dispatch('beforeExtensionAutorun', ext.identifier)
         this._logger.debug(`starting autorun of extension with identifier = <${ext.identifier}>`)
+
         await ext.autorun(container, applicationConfig)
+
         this._logger.debug(`completed autorun of extension with identifier = <${ext.identifier}>`)
+        MetafoksEvents.dispatch('afterExtensionAutorun', ext.identifier)
       }
     }
     this._logger.info('extensions autorun execution phase done')
+    MetafoksEvents.dispatch('afterExtensionsAutorunPhase')
   }
 
   private static _logger = LoggerFactory.create(MetafoksExtensionsLoader)
