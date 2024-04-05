@@ -1,5 +1,5 @@
 *
-!src/
+!src
 !src/**/*
 
 !example/
@@ -8,10 +8,13 @@
 !example-extension/**/*
 example/logs
 
-!test/
+!docs
+!docs/**/*
+
+!test
 !test/**/*
 
-!locale/
+!locale
 !locale/**/*
 
 !LICENCE
