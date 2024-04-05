@@ -5,6 +5,9 @@ export interface MetafoksEventsMap {
   beforeStart: () => void
   afterStart: () => void
 
+  beforeClose: (force: boolean) => void
+  afterClose: () => void
+
   beforeApplicationStartCall: () => void
 
   afterApplicationConfigLoaded: (config: MetafoksApplicationConfiguration & MetafoksAppConfig) => void
@@ -20,6 +23,12 @@ export interface MetafoksEventsMap {
 
   beforeExtensionAutorun: (identifier: string) => void
   afterExtensionAutorun: (identifier: string) => void
+
+  beforeExtensionsClosePhase: (force: boolean) => void
+  afterExtensionsClosePhase: () => void
+
+  beforeExtensionClose: (identifier: string) => void
+  afterExtensionClose: (identifier: string) => void
 }
 
 export class MetafoksEvents {

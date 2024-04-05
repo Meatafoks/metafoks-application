@@ -45,6 +45,14 @@ export class MetafoksExtensionsLoader {
     }
   }
 
+  public static extensionsTestModuleEnabled() {
+    if (this._configuration.enabled === false) {
+      this._logger.info('[!] extensions module disabled by <config.extensions.enabled = false>')
+      return false
+    }
+    return true
+  }
+
   /**
    * Устанавливает расширения в контейнер
    * @param container
@@ -52,11 +60,6 @@ export class MetafoksExtensionsLoader {
    */
   public static extensionsInstallToContainer(container: typeof Container, applicationConfig: any) {
     MetafoksEvents.dispatch('beforeExtensionsInstallPhase')
-
-    if (this._configuration.enabled === false) {
-      this._logger.info('[!] extensions module disabled by <config.extensions.enabled = false>')
-      return
-    }
 
     this._logger.debug('started extensions installation')
     const extensions = Object.values(this._extensions)
@@ -74,6 +77,33 @@ export class MetafoksExtensionsLoader {
     }
     this._logger.info('extensions installations done')
     MetafoksEvents.dispatch('afterExtensionsInstallPhase')
+  }
+
+  /**
+   * Устанавливает расширения в контейнер
+   * @param force
+   * @param container
+   * @param applicationConfig
+   */
+  public static extensionsClose(force: boolean, container: typeof Container, applicationConfig: any) {
+    MetafoksEvents.dispatch('beforeExtensionsClosePhase', force)
+
+    this._logger.debug('started extensions close phase')
+    const extensions = Object.values(this._extensions)
+
+    for (const ext of extensions) {
+      if (ext.close) {
+        MetafoksEvents.dispatch('beforeExtensionClose', ext.identifier)
+        this._logger.debug(`closing extension with identifier <${ext.identifier}>`)
+
+        ext.close(force, container, applicationConfig)
+
+        this._logger.info(`closed extension with identifier <${ext.identifier}>`)
+        MetafoksEvents.dispatch('afterExtensionClose', ext.identifier)
+      }
+    }
+    this._logger.info('extensions closing phase done')
+    MetafoksEvents.dispatch('afterExtensionsClosePhase')
   }
 
   /**

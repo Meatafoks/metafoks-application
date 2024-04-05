@@ -123,12 +123,26 @@ export class MetafoksApplication {
     MetafoksLogger.loggerEnableForWrite()
     MetafoksLogger.configure(this.configuration.logger)
 
-    MetafoksExtensionsLoader.extensionsInstallToContainer(this.container, this.configuration)
-    await MetafoksExtensionsLoader.extensionsStartAutorun(this.container, this.configuration)
+    if (MetafoksExtensionsLoader.extensionsTestModuleEnabled()) {
+      MetafoksExtensionsLoader.extensionsInstallToContainer(this.container, this.configuration)
+      await MetafoksExtensionsLoader.extensionsStartAutorun(this.container, this.configuration)
+    }
 
     MetafoksEvents.dispatch('beforeApplicationStartCall')
     await MetafoksApplication._applicationInvokeApplicationComponentStart()
 
+    MetafoksApplication._applicationListenClose()
+    MetafoksEvents.dispatch('afterStart')
+  }
+
+  public static async stopApplication(force: boolean = false) {
+    MetafoksEvents.dispatch('beforeClose', force)
+
+    this._logger.debug(`stopping application [force=${force}]`)
+    if (MetafoksExtensionsLoader.extensionsTestModuleEnabled()) {
+      MetafoksExtensionsLoader.extensionsClose(force, this.container, this.configuration)
+    }
+    this._logger.info('application has been stopped')
     MetafoksEvents.dispatch('afterStart')
   }
 
@@ -165,5 +179,14 @@ export class MetafoksApplication {
       await component.run()
       return
     }
+  }
+
+  private static _applicationListenClose() {
+    process.once('SIGINT', async () => {
+      await this.stopApplication()
+    })
+    process.once('SIGTERM', async () => {
+      await this.stopApplication()
+    })
   }
 }
