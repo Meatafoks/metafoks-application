@@ -19,6 +19,9 @@ export function abstractApplicationTesting(config: MetafoksApplicationConfigurat
               exclude: ['com.extension.test.id'],
             },
           },
+          logger: {
+            fileWritingEnabled: false,
+          },
         },
         config,
       ),

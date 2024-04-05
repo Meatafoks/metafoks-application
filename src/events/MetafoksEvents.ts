@@ -67,8 +67,4 @@ export class MetafoksEvents {
 
   private static _logger = LoggerFactory.create(MetafoksEvents)
   private static _listeners: Partial<Record<keyof MetafoksEventsMap, Set<any>>> = {}
-
-  static {
-    this._logger.level = 'debug'
-  }
 }

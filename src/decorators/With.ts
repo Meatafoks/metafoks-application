@@ -1,5 +1,5 @@
 import { MetafoksExtension } from '../extionsion'
-import { MetafoksExtensionsLoader } from '../loaders/extensions'
+import { MetafoksExtensionsLoader } from '../loaders'
 
 export function Extensions(...extensions: MetafoksExtension<any>[]): ClassDecorator {
   MetafoksExtensionsLoader.addExtension(...extensions)

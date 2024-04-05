@@ -11,6 +11,8 @@ import {
   MetafoksConfigLoader,
   MetafoksExtensionsLoader,
   MetafoksExtensionsLoaderConfiguration,
+  MetafoksLoggerConfiguration,
+  MetafoksLogger,
 } from './loaders'
 import { merge } from '@metafoks/toolbox'
 import { MetafoksEvents } from './events'
@@ -22,6 +24,7 @@ declare global {
 export interface MetafoksApplicationConfiguration {
   config?: MetafoksConfigLoaderConfiguration
   extensions?: MetafoksExtensionsLoaderConfiguration
+  logger?: MetafoksLoggerConfiguration
 }
 
 export interface MetafoksApplicationConfigurationExtra extends MetafoksApplicationConfiguration {
@@ -94,6 +97,8 @@ export class MetafoksApplication {
    * @return {void} - This method does not return anything.
    */
   public static configure(config?: MetafoksApplicationConfigurationExtra): void {
+    MetafoksLogger.configure(config?.logger)
+
     if (config) {
       MetafoksConfigLoader.configure(config.config)
       MetafoksExtensionsLoader.configure(config.extensions)
@@ -114,6 +119,9 @@ export class MetafoksApplication {
     MetafoksConfigLoader.configReadProfiledJSON()
     MetafoksApplication._applicationInjectConfigToContainer()
     MetafoksEvents.dispatch('afterApplicationConfigLoaded', this.configuration)
+
+    MetafoksLogger.loggerEnableForWrite()
+    MetafoksLogger.configure(this.configuration.logger)
 
     MetafoksExtensionsLoader.extensionsInstallToContainer(this.container, this.configuration)
     await MetafoksExtensionsLoader.extensionsStartAutorun(this.container, this.configuration)
@@ -138,7 +146,6 @@ export class MetafoksApplication {
    */
   private static _applicationInjectConfigToContainer() {
     this.container.set('config', this.configuration)
-    MetafoksApplication._logger.info('configuration loaded to application context')
   }
 
   /**
@@ -149,16 +156,14 @@ export class MetafoksApplication {
   private static async _applicationInvokeApplicationComponentStart() {
     const component = MetafoksApplication.getApplicationComponent()
     if ('start' in component) {
+      this._logger.debug('starting application component <start> method')
       await component.start()
       return
     }
     if ('run' in component) {
+      this._logger.debug('starting application component <run> method')
       await component.run()
       return
     }
-  }
-
-  static {
-    MetafoksApplication._logger.level = 'debug'
   }
 }

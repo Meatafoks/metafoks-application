@@ -1,7 +1,7 @@
 import { abstractApplicationTesting } from '../abstractApplicationTesting'
 import { MetafoksApplication } from '../../src'
 import { TestService } from '../../example/services/TestService'
-import { MetafoksConfigLoader, MetafoksExtensionsLoader } from '../../src/loaders'
+import { MetafoksConfigLoader, MetafoksExtensionsLoader } from '../../src'
 
 describe('config tests', () => {
   abstractApplicationTesting()

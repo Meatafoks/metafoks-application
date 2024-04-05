@@ -36,8 +36,4 @@ export class MetafoksConfigLoader {
     this._configuration = merge(this._configuration, this._configReader.getConfigActiveProfileContent())
     this._logger.info(`loaded config JSON file with profile <${this.configuration.profile}>`)
   }
-
-  static {
-    this._logger.level = 'debug'
-  }
 }

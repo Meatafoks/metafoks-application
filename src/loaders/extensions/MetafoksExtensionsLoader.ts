@@ -124,8 +124,4 @@ export class MetafoksExtensionsLoader {
       exclude: [],
     },
   }
-
-  static {
-    MetafoksExtensionsLoader._logger.level = 'debug'
-  }
 }
