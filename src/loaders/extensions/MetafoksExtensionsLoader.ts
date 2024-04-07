@@ -114,7 +114,8 @@ export class MetafoksExtensionsLoader {
 
         this._logger.debug(`installing extension with identifier <${ext.identifier}>`)
 
-        ext.install(container, applicationConfig)
+        const config = ext.configProperty ? applicationConfig?.[ext.configProperty] ?? {} : {}
+        ext.install(container, config)
 
         this._logger.info(`installed extension with identifier <${ext.identifier}>`)
         MetafoksEvents.dispatch('afterExtensionInstall', ext.identifier)
@@ -149,7 +150,8 @@ export class MetafoksExtensionsLoader {
 
         this._logger.debug(`closing extension with identifier <${ext.identifier}>`)
 
-        await ext.close(force, container, applicationConfig)
+        const config = ext.configProperty ? applicationConfig?.[ext.configProperty] ?? {} : {}
+        await ext.close(force, container, config)
 
         this._logger.info(`closed extension with identifier <${ext.identifier}>`)
         MetafoksEvents.dispatch('afterExtensionClose', ext.identifier)
@@ -184,7 +186,8 @@ export class MetafoksExtensionsLoader {
 
         this._logger.debug(`starting autorun of extension with identifier = <${ext.identifier}>`)
 
-        await ext.autorun(container, applicationConfig)
+        const config = ext.configProperty ? applicationConfig?.[ext.configProperty] ?? {} : {}
+        await ext.autorun(container, config)
 
         this._logger.debug(`completed autorun of extension with identifier = <${ext.identifier}>`)
         MetafoksEvents.dispatch('afterExtensionAutorun', ext.identifier)
