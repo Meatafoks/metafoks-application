@@ -189,7 +189,7 @@ export class MetafoksExtensionsLoader {
         const config = ext.configProperty ? applicationConfig?.[ext.configProperty] ?? {} : {}
         await ext.autorun(container, config)
 
-        this._logger.debug(`completed autorun of extension with identifier = <${ext.identifier}>`)
+        this._logger.info(`completed autorun of extension with identifier = <${ext.identifier}>`)
         MetafoksEvents.dispatch('afterExtensionAutorun', ext.identifier)
       }
     }

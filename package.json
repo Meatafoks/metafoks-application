@@ -18,9 +18,8 @@
   "dependencies": {
     "@metafoks/logger": "2.0.0",
     "@metafoks/config-reader": "1.0.2",
-    "@metafoks/context": "1.0.1",
-    "@metafoks/toolbox": "1.0.1",
-    "typescript": "5.3.3"
+    "@metafoks/context": "1.0.3",
+    "@metafoks/toolbox": "1.0.1"
   },
   "scripts": {
     "build": "tsc",
@@ -36,7 +35,8 @@
     "eslint-plugin-jest": "^27.4.3",
     "prettier": "3.2.4",
     "jest": "29.7.0",
-    "ts-jest": "29.1.2"
+    "ts-jest": "29.1.2",
+    "typescript": "5.4.4"
   },
   "prettier": "@metafoks/prettier",
   "eslintConfig": {
