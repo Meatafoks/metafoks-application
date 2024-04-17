@@ -1,0 +1,6 @@
+export * from './AutoComponent'
+export * from './Inject'
+export * from './InjectByToken'
+export * from './AutoInject'
+export * from './CustomComponent'
+export * from './InjectManyByToken'

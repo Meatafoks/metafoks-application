@@ -16,6 +16,15 @@ import {
 } from './loaders'
 import { merge } from '@metafoks/toolbox'
 import { MetafoksEvents } from './events'
+import {
+  MetafoksScanner,
+  MetafoksScannerProperties,
+  MetafoksContainer,
+  MetafoksContainerProperties,
+  METAFOKS_CONTEXT_INJECT_COMPONENT,
+  METAFOKS_CONTEXT_INJECT_COMPONENT_MULTIPLE,
+  CustomComponent,
+} from './v2'
 
 declare global {
   type MetafoksAppConfig = any
@@ -25,6 +34,10 @@ export interface MetafoksApplicationConfiguration {
   config?: MetafoksConfigLoaderConfiguration
   extensions?: MetafoksExtensionsLoaderConfiguration
   logger?: MetafoksLoggerConfiguration
+  scanner?: Partial<MetafoksScannerProperties>
+  container?: Partial<MetafoksContainerProperties>
+
+  scanComponents?: boolean
 }
 
 export interface MetafoksApplicationConfigurationExtra extends MetafoksApplicationConfiguration {
@@ -32,6 +45,8 @@ export interface MetafoksApplicationConfigurationExtra extends MetafoksApplicati
 }
 
 export class MetafoksApplication {
+  public static shared = new MetafoksApplication()
+
   /**
    * Контейнер зависимостей (модулей)
    */
@@ -103,6 +118,8 @@ export class MetafoksApplication {
       MetafoksConfigLoader.configure(config.config)
       MetafoksExtensionsLoader.configure(config.extensions)
       MetafoksApplication.overrideConfigValues(config.overrides)
+      MetafoksApplication.shared.scanner.configure(config.scanner)
+      MetafoksApplication.shared.container.configure(config.container)
     }
   }
 
@@ -127,6 +144,8 @@ export class MetafoksApplication {
       MetafoksExtensionsLoader.extensionsInstallToContainer(this.container, this.configuration)
       await MetafoksExtensionsLoader.extensionsStartAutorun(this.container, this.configuration)
     }
+
+    await MetafoksApplication.shared.start()
 
     MetafoksEvents.dispatch('beforeApplicationStartCall')
     await MetafoksApplication._applicationInvokeApplicationComponentStart()
@@ -189,4 +208,46 @@ export class MetafoksApplication {
       await this.stopApplication()
     })
   }
+
+  private readonly _logger = LoggerFactory.create(MetafoksApplication)
+
+  /**
+   * Контейнер зависимостей
+   */
+  public readonly container = new MetafoksContainer('default')
+
+  /**
+   * Сканер компонентов
+   */
+  public readonly scanner = new MetafoksScanner()
+
+  public constructor() {}
+
+  public async start() {
+    MetafoksApplication._logger.debug('starting application v2')
+
+    await this._registerConfig()
+    await this._registerAutoComponents()
+  }
+
+  private async _registerConfig() {
+    const config = MetafoksApplication.configuration
+    this.container.set('config', config)
+  }
+
+  private async _registerAutoComponents() {
+    // if (MetafoksApplication.configuration.scanComponents) {
+    const components = await this.scanner.scanClassComponents('@AutoComponent', METAFOKS_CONTEXT_INJECT_COMPONENT)
+    for (const component of components) {
+      this.container.set(component.tokenName, component.target, component.isMultiple)
+    }
+
+    const components2 = await this.scanner.scanClassComponents('@CustomComponent', METAFOKS_CONTEXT_INJECT_COMPONENT)
+    for (const component of components2) {
+      this.container.set(component.tokenName, component.target, component.isMultiple)
+    }
+
+    this._logger.info(`registered <${Object.values(components).length}> auto components`)
+  }
+  // }
 }
