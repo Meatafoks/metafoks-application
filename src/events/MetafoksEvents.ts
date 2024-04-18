@@ -1,43 +1,20 @@
 import { LoggerFactory } from '@metafoks/logger'
-import { MetafoksApplicationConfiguration } from '../MetafoksApplication'
+import { MetafoksEventsMap } from './MetafoksEventsMap'
 
-export interface MetafoksEventsMap {
-  beforeStart: () => void
-  afterStart: () => void
-
-  beforeClose: (force: boolean) => void
-  afterClose: () => void
-
-  beforeApplicationStartCall: () => void
-
-  afterApplicationConfigLoaded: (config: MetafoksApplicationConfiguration & MetafoksAppConfig) => void
-
-  beforeExtensionsInstallPhase: () => void
-  afterExtensionsInstallPhase: () => void
-
-  beforeExtensionInstall: (identifier: string) => void
-  afterExtensionInstall: (identifier: string) => void
-
-  beforeExtensionsAutorunPhase: () => void
-  afterExtensionsAutorunPhase: () => void
-
-  beforeExtensionAutorun: (identifier: string) => void
-  afterExtensionAutorun: (identifier: string) => void
-
-  beforeExtensionsClosePhase: (force: boolean) => void
-  afterExtensionsClosePhase: () => void
-
-  beforeExtensionClose: (identifier: string) => void
-  afterExtensionClose: (identifier: string) => void
-}
-
+/**
+ * Класс для работы с событиями
+ */
 export class MetafoksEvents {
+  private _logger = LoggerFactory.create(MetafoksEvents)
+  private _listeners: Partial<Record<keyof MetafoksEventsMap, Set<any>>> = {}
+
   /**
    * Добавляет обработчик событий
-   * @param event
-   * @param handler
+   *
+   * @param event - название события
+   * @param handler - обработчик события
    */
-  public static addEventListener<Event extends keyof MetafoksEventsMap, Handler extends MetafoksEventsMap[Event]>(
+  public addEventListener<Event extends keyof MetafoksEventsMap, Handler extends MetafoksEventsMap[Event]>(
     event: Event,
     handler: Handler,
   ) {
@@ -48,10 +25,11 @@ export class MetafoksEvents {
 
   /**
    * Удаляет обработчик событий
-   * @param event
-   * @param handler
+   *
+   * @param event - название события
+   * @param handler - обработчик события
    */
-  public static removeEventListener<Event extends keyof MetafoksEventsMap, Handler extends MetafoksEventsMap[Event]>(
+  public removeEventListener<Event extends keyof MetafoksEventsMap, Handler extends MetafoksEventsMap[Event]>(
     event: Event,
     handler: Handler,
   ) {
@@ -62,10 +40,11 @@ export class MetafoksEvents {
 
   /**
    * Запускает обработчики событий
-   * @param event
-   * @param args
+   *
+   * @param event - название события
+   * @param args - аргументы для обработчиков
    */
-  public static dispatch<Event extends keyof MetafoksEventsMap, Handler extends MetafoksEventsMap[Event]>(
+  public dispatch<Event extends keyof MetafoksEventsMap, Handler extends MetafoksEventsMap[Event]>(
     event: Event,
     ...args: Parameters<Handler>
   ) {
@@ -73,7 +52,4 @@ export class MetafoksEvents {
       this._listeners[event]?.forEach(fn => fn.apply(null, args))
     }
   }
-
-  private static _logger = LoggerFactory.create(MetafoksEvents)
-  private static _listeners: Partial<Record<keyof MetafoksEventsMap, Set<any>>> = {}
 }

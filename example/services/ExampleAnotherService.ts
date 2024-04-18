@@ -1,6 +1,6 @@
-import { AutoComponent } from '../../src/v2'
+import { Service } from '../../src'
 
-@AutoComponent
+@Service
 export class ExampleAnotherService {
   public value = 13
 }

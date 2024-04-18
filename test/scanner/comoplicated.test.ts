@@ -1,5 +1,4 @@
-import { NodeUtils } from '../../src'
-import { ClassConstructor } from '@metafoks/context'
+import { ComponentConstructor, NodeUtils } from '../../src'
 
 describe('complicated nodes tes', () => {
   const file = __dirname + '/testFile.ts'
@@ -23,7 +22,7 @@ describe('complicated nodes tes', () => {
     }
 
     const objs = await import(file)
-    const importedObjects: Record<string, ClassConstructor<any>> = {}
+    const importedObjects: Record<string, ComponentConstructor<any>> = {}
     for (const [importName, className] of Object.entries(requirements)) {
       importedObjects[className] = objs[importName]
     }

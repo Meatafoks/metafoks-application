@@ -7,12 +7,12 @@ describe('config tests', () => {
   abstractApplicationTesting()
 
   it('should return correct value', () => {
-    const testService = MetafoksApplication.getComponent(TestService)
+    const testService = MetafoksApplication.shared.container.getClassFirst(TestService)
     expect(testService.getCoolValue()).toBe('works')
   })
 
   it('should changed some overrides', () => {
-    const config = MetafoksApplication.getComponent<MetafoksAppConfig>('config')
+    const config = MetafoksApplication.shared.container.getFirst<MetafoksAppConfig>('config')
     expect(config.foo).not.toBe('bar')
     expect(config.foo).toBe('poo')
   })

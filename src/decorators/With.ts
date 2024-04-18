@@ -1,8 +1,8 @@
 import { MetafoksExtension } from '../extionsion'
-import { MetafoksExtensionsLoader } from '../loaders'
+import { MetafoksApplication } from '../MetafoksApplication'
 
 export function Extensions(...extensions: MetafoksExtension<any>[]): ClassDecorator {
-  MetafoksExtensionsLoader.addExtension(...extensions)
+  MetafoksApplication.shared.extensions.addExtension(...extensions)
   return () => {}
 }
 export const With = Extensions

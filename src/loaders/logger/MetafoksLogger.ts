@@ -4,29 +4,29 @@ import { merge } from '@metafoks/toolbox'
 import { Appender } from 'log4js'
 
 export class MetafoksLogger {
-  public static get configuration(): Readonly<MetafoksLoggerConfiguration> {
+  public get configuration(): Readonly<MetafoksLoggerConfiguration> {
     return Object.freeze(this._configuration)
   }
 
-  public static configure(config: MetafoksLoggerConfiguration = {}) {
+  public configure(config: MetafoksLoggerConfiguration = {}) {
     this._configuration = merge(this._configuration, config)
     this._configureLogger(this._configuration)
   }
 
-  public static loggerEnableForWrite() {
+  public loggerEnableForWrite() {
     this._canWrite = true
   }
 
-  private static _canWrite = false
-  private static _logger = LoggerFactory.create(MetafoksLogger)
+  private _canWrite = false
+  private _logger = LoggerFactory.create(MetafoksLogger)
 
-  private static _configuration: MetafoksLoggerConfiguration = {
+  private _configuration: MetafoksLoggerConfiguration = {
     logsPath: 'logs',
     defaultLevel: 'info',
     fileWritingEnabled: true,
   }
 
-  private static _configureLogger(config: MetafoksLoggerConfiguration) {
+  private _configureLogger(config: MetafoksLoggerConfiguration) {
     const appenders: { [name: string]: Appender } = {
       out: { type: 'stdout' },
     }

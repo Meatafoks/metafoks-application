@@ -1,6 +1,0 @@
-export * from './AutoComponent'
-export * from './Inject'
-export * from './InjectByToken'
-export * from './AutoInject'
-export * from './InjectManyByToken'
-export * from './MFC'

@@ -34,9 +34,17 @@ export class MetafoksContainer {
    * Возвращает первый элемент из контейнера по токену
    * @param token - токен
    */
-  public getFirst<T>(token: MetafoksContainerToken): T | undefined {
+  public getClassFirst<T>(token: ComponentConstructor<T>): T {
+    return this.getFirst(token.name)
+  }
+
+  /**
+   * Возвращает первый элемент из контейнера по токену
+   * @param token - токен
+   */
+  public getFirst<T>(token: MetafoksContainerToken): T {
     this.createCache(token)
-    return this._cache[token]?.[0] as T
+    return this._cache[token][0] as T
   }
 
   /**
@@ -46,6 +54,14 @@ export class MetafoksContainer {
   public getAll<T>(token: MetafoksContainerToken): T[] {
     this.createCache(token)
     return (this._cache[token] as T[]) ?? []
+  }
+
+  /**
+   * Устанавливает класс в контейнер
+   * @param component
+   */
+  public setClass(component: ComponentConstructor) {
+    this.set(component.name, component)
   }
 
   /**
@@ -59,12 +75,12 @@ export class MetafoksContainer {
       this._container[token] = []
     }
     if (!multiple) {
-      this._logger.trace(`set component to container <${this._name}> with token <${JSON.stringify(token)}>`)
+      this._logger.trace(`set component to container <${this._name}> with token <${String(token)}>`)
       this._container[token] = [component]
       return
     }
 
-    this._logger.trace(`push component to container <${this._name}> with token <${JSON.stringify(token)}>`)
+    this._logger.trace(`push component to container <${this._name}> with token <${String(token)}>`)
     this._container[token].push(component)
   }
 

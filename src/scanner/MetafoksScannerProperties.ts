@@ -1,4 +1,4 @@
-import { LoggerLevelValue } from '../../loaders'
+import { LoggerLevelValue } from '../loaders'
 
 export interface MetafoksScannerProperties {
   glob: string[]

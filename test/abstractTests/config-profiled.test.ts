@@ -6,7 +6,7 @@ describe('config tests with profile', () => {
   abstractApplicationTesting({ config: { profile: 'test1' } })
 
   it('should return correct value', () => {
-    const testService = MetafoksApplication.getComponent(TestService)
+    const testService = MetafoksApplication.shared.container.getClassFirst(TestService)
     expect(testService.getCoolValue()).toBe('works in test 1')
   })
 })

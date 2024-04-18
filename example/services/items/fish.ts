@@ -1,4 +1,4 @@
-import { MFC } from '../../../src/v2'
+import { MFC } from '../../../src'
 
 @MFC.CreateComponent({ token: 'item', multiple: true })
 export class Fish {

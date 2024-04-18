@@ -1,7 +1,7 @@
-import { Application, Autowire, Configure, Override, With } from '../src'
+import { Application, Configure, Override, With } from '../src'
 import { TestService } from './services/TestService'
 import { ExampleExtension } from '../example-extension'
-import { Inject, InjectManyByToken } from '../src/v2'
+import { Inject, InjectMany } from '../src'
 import { ExampleService } from './services/ExampleService'
 
 @With(ExampleExtension)
@@ -9,24 +9,23 @@ import { ExampleService } from './services/ExampleService'
 @Configure({
   scanner: {
     glob: ['./example/**/*.ts'],
-    loggerLevel: 'debug',
   },
   logger: {
-    defaultLevel: 'debug',
+    defaultLevel: 'info',
     level: {
-      MetafoksContainer: 'trace',
+      MetafoksContainer: 'info',
     },
   },
 })
 @Application
 export class App {
-  @Autowire
+  @Inject
   public service!: TestService
 
   @Inject
   public exampleService!: ExampleService
 
-  @InjectManyByToken('item')
+  @InjectMany('item')
   public items!: any[]
 
   public start() {

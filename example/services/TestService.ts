@@ -1,9 +1,9 @@
-import { Autowire, Service } from '@metafoks/context'
 import { CoolComponent } from '../../example-extension'
+import { Service, Inject } from '../../src'
 
 @Service
 export class TestService {
-  @Autowire
+  @Inject
   public coolComponent!: CoolComponent
 
   public value = 0

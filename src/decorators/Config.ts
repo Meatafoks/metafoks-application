@@ -1,11 +1,11 @@
-import { RawAutowire } from '@metafoks/context'
 import { MetafoksApplication, MetafoksApplicationConfiguration } from '../MetafoksApplication'
 import { LoggerLevelValue } from '../loaders'
+import { MFC } from './MFC'
 
-export const Config = RawAutowire('config')
+export const Config = MFC.InjectComponent({ token: 'config' })
 
 export function Configure(configuration: Partial<MetafoksApplicationConfiguration>): ClassDecorator {
-  MetafoksApplication.configure(configuration)
+  MetafoksApplication.shared.configure(configuration)
   return () => {}
 }
 
@@ -18,7 +18,7 @@ export function Profile(profile?: string): ClassDecorator {
 }
 
 export function Override(config: MetafoksApplicationConfiguration & MetafoksAppConfig): ClassDecorator {
-  MetafoksApplication.overrideConfigValues(config)
+  MetafoksApplication.shared.overrideConfigValues(config)
   return () => {}
 }
 

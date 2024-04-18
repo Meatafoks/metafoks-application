@@ -1,7 +1,13 @@
 import { MetafoksExtension } from './MetafoksExtension'
 import { merge } from '@metafoks/toolbox'
 
-export function repackExtension<TConfig>(extension: MetafoksExtension<TConfig>, configuration?: TConfig) {
+/**
+ * @private Функция перепаковки расширения
+ * @param extension Расширение
+ * @param configuration Конфигурация расширения
+ */
+
+export function _repackExtension<TConfig>(extension: MetafoksExtension<TConfig>, configuration?: TConfig) {
   const modifiedExtension: MetafoksExtension<TConfig> = {
     identifier: extension.identifier,
     configProperty: extension.configProperty,
@@ -20,9 +26,9 @@ export function repackExtension<TConfig>(extension: MetafoksExtension<TConfig>, 
     }
   }
   if (extension.close) {
-    modifiedExtension.close = (f, ct, cf) => {
+    modifiedExtension.close = (ct, cf, f) => {
       const config = merge(cf ?? {}, configuration ?? {}) as TConfig
-      extension.close?.(f, ct, config)
+      extension.close?.(ct, config, f)
     }
   }
 

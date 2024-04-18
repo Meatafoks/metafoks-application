@@ -1,4 +1,4 @@
-import { MetafoksScanner } from '../../src/v2'
+import { MetafoksScanner } from '../../src'
 import 'reflect-metadata'
 
 describe('scanner', () => {

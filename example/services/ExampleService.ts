@@ -1,9 +1,9 @@
-import { AutoComponent, AutoInject, Inject } from '../../src/v2'
 import { ExampleAnotherService } from './ExampleAnotherService'
+import { Inject, Service } from '../../src'
 
-@AutoComponent
+@Service
 export class ExampleService {
-  @AutoInject
+  @Inject
   public exampleAnotherService!: ExampleAnotherService
 
   public getX2value() {

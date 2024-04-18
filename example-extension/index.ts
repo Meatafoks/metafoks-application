@@ -1,14 +1,13 @@
-import { MetafoksExtension } from '../src'
 import { CoolComponent } from './CoolComponent'
-import { ExtensionFactory } from '../src/extionsion/ExtensionFactory'
+import { ExtensionFactory } from '../src'
 
 export { CoolComponent }
 
 export const ExampleExtension = ExtensionFactory.create<{ key?: string }>({
   identifier: 'com.extension.test.id',
   configProperty: 'testEx',
-  install: (container, config) => {
-    container.set(CoolComponent, new CoolComponent(config.key ?? ''))
+  install: (app, config) => {
+    app.container.set(CoolComponent.name, new CoolComponent(config.key ?? ''))
   },
   autorun: () => {
     console.log('autorun!')

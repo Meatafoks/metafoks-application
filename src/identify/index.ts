@@ -1,1 +1,1 @@
-export * from './MetafoksApplicationComponentIdentifier'
+export * from './getApplicationContainerIdentifier'

@@ -1,7 +1,7 @@
-import { AutoComponent } from '../../../src/v2'
+import { Component } from '../../../src'
 
-@AutoComponent
+@Component
 export class AComponent {}
 
-@AutoComponent
+@Component
 export class BComponent {}
