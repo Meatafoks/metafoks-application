@@ -140,12 +140,12 @@ export class MetafoksApplication {
     MetafoksLogger.loggerEnableForWrite()
     MetafoksLogger.configure(this.configuration.logger)
 
+    await MetafoksApplication.shared.start()
+
     if (MetafoksExtensionsLoader.extensionsTestModuleEnabled()) {
       MetafoksExtensionsLoader.extensionsInstallToContainer(this.container, this.configuration)
       await MetafoksExtensionsLoader.extensionsStartAutorun(this.container, this.configuration)
     }
-
-    await MetafoksApplication.shared.start()
 
     MetafoksEvents.dispatch('beforeApplicationStartCall')
     await MetafoksApplication._applicationInvokeApplicationComponentStart()
