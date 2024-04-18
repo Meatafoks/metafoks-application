@@ -42,10 +42,7 @@ export class MetafoksScanner {
     }
   }
 
-  public async scanClassComponents(
-    decoratorName: string = '@AutoComponent',
-    metaKeyCheck?: string | symbol,
-  ): Promise<MetafoksScannerResultItem[]> {
+  public async scanClassComponents(metaKeyCheck?: string | symbol): Promise<MetafoksScannerResultItem[]> {
     this._logger.info('scanning for components...')
     const files = this._properties.glob.flatMap(value => glob.sync(value))
     const importedObjects: MetafoksScannerResultItem[] = []
@@ -56,11 +53,11 @@ export class MetafoksScanner {
       const nodes = NodeUtils.getAnyExportedClassDeclarationNodesFromFile(file)
 
       // Получаем имена импортов
-      const importNames = this._getImportNames(nodes, decoratorName)
+      const importNames = this._getImportNames(nodes)
       const fullPath = resolve(currentWorkingDir, file)
 
       if (Object.keys(importNames).length === 0) {
-        this._logger.trace(`file <${fullPath}> does not contain any components for decorator <${decoratorName}>`)
+        this._logger.trace(`file <${fullPath}> does not contain any components with decorators`)
         continue
       }
 
@@ -74,10 +71,7 @@ export class MetafoksScanner {
 
         if (metaKeyCheck) {
           const metaKey = Reflect.getMetadata(metaKeyCheck, importedSource[importName])
-          if (!metaKey) {
-            this._logger.warn(`class <${className}> is not a requested component for decorator <${decoratorName}>`)
-            continue
-          }
+          if (!metaKey) continue
         }
 
         const tokenName = Reflect.getMetadata(METAFOKS_CONTEXT_INJECT_COMPONENT_TOKEN, importedSource[importName])
@@ -102,7 +96,7 @@ export class MetafoksScanner {
     return text.startsWith(name)
   }
 
-  private _getImportNames(nodes: readonly ts.ClassDeclaration[], decoratorName: string): Record<string, string> {
+  private _getImportNames(nodes: readonly ts.ClassDeclaration[]): Record<string, string> {
     const importNamesMap: Record<string, string> = {}
 
     for (const node of nodes) {
@@ -111,9 +105,6 @@ export class MetafoksScanner {
 
       // Если нет декораторов или нет имени класса, то пропускаем
       if (decorators.length <= 0 || !className) continue
-
-      // Если в классе нет декоратора @AutoComponent, то пропускаем
-      if (!decorators.some(v => this._testDecorator(v, decoratorName))) continue
 
       const importName = NodeUtils.isNodeDefaultExported(node) ? 'default' : className
       importNamesMap[importName] = className

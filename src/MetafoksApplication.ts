@@ -16,15 +16,8 @@ import {
 } from './loaders'
 import { merge } from '@metafoks/toolbox'
 import { MetafoksEvents } from './events'
-import {
-  MetafoksScanner,
-  MetafoksScannerProperties,
-  MetafoksContainer,
-  MetafoksContainerProperties,
-  METAFOKS_CONTEXT_INJECT_COMPONENT,
-  METAFOKS_CONTEXT_INJECT_COMPONENT_MULTIPLE,
-  CustomComponent,
-} from './v2'
+import { MetafoksScanner, MetafoksScannerProperties } from './v2'
+import { MetafoksContainer, MetafoksContainerProperties, METAFOKS_CONTEXT_INJECT_COMPONENT } from './v2'
 
 declare global {
   type MetafoksAppConfig = any
@@ -45,7 +38,12 @@ export interface MetafoksApplicationConfigurationExtra extends MetafoksApplicati
 }
 
 export class MetafoksApplication {
-  public static shared = new MetafoksApplication()
+  private static _sharedInstance?: MetafoksApplication = undefined
+
+  public static get shared(): MetafoksApplication {
+    if (!MetafoksApplication._sharedInstance) MetafoksApplication._sharedInstance = new MetafoksApplication()
+    return MetafoksApplication._sharedInstance
+  }
 
   /**
    * Контейнер зависимостей (модулей)
@@ -237,13 +235,8 @@ export class MetafoksApplication {
 
   private async _registerAutoComponents() {
     // if (MetafoksApplication.configuration.scanComponents) {
-    const components = await this.scanner.scanClassComponents('@AutoComponent', METAFOKS_CONTEXT_INJECT_COMPONENT)
+    const components = await this.scanner.scanClassComponents(METAFOKS_CONTEXT_INJECT_COMPONENT)
     for (const component of components) {
-      this.container.set(component.tokenName, component.target, component.isMultiple)
-    }
-
-    const components2 = await this.scanner.scanClassComponents('@CustomComponent', METAFOKS_CONTEXT_INJECT_COMPONENT)
-    for (const component of components2) {
       this.container.set(component.tokenName, component.target, component.isMultiple)
     }
 

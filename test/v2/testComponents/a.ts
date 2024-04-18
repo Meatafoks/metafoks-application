@@ -1,4 +1,4 @@
-import { AutoComponent } from '../../../src/v2/decorators/AutoComponent'
+import { AutoComponent } from '../../../src/v2'
 
 @AutoComponent
 export class AComponent {}
