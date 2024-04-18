@@ -19,7 +19,8 @@
     "@metafoks/config-reader": "1.0.2",
     "@metafoks/logger": "2.0.1",
     "@metafoks/toolbox": "1.0.1",
-    "glob": "^10.3.12"
+    "glob": "^10.3.12",
+    "reflect-metadata": "^0.2.2"
   },
   "scripts": {
     "build": "tsc",

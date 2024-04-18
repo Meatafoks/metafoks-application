@@ -7,6 +7,7 @@ import ts from 'typescript'
 import process from 'process'
 import { resolve } from 'path'
 import { METAFOKS_CONTEXT_INJECT_COMPONENT_MULTIPLE, METAFOKS_CONTEXT_INJECT_COMPONENT_TOKEN } from '../idntifiers'
+import 'reflect-metadata'
 
 export interface MetafoksScannerResultItem {
   className: string
